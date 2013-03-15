@@ -44,7 +44,12 @@ Of course this is far from what the academic audience regards a valid reference,
 but it gets the job done for all draft work esp. if you are in constant negotiation about your content.
 
 This purely file-based quick shot references generator may help you if you are in the "paper gathering phase"
-whereafter you will likely throw away 90% of the papers. After that phase I usually hand craft some perfect bibtext files based on google scholar and common sense ;)
+whereafter you will likely throw away 90% of the papers. After that phase I usually hand craft some perfect bibtext files based on google scholar and common sense.
+
+**Open Issues**
+
+*Issue 1:* "It work for just for me!" - This is the very first version and has many things hard coded. *TODO:* make reusable
+
 
 
 
