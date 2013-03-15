@@ -7,6 +7,8 @@ License: MIT
 
 getbib.sh
 ---------
+**Usage:** `getbib.sh DIR`, where `DIR` must be a directory containing some PDF files.
+        
 **Input:** all PDF files in the `DIR`
 
 **Output:** automatically generated bibtex for yout drafty papers
