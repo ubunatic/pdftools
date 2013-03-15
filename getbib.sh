@@ -47,8 +47,12 @@ killBadTitles() {
 	sed "s#.*[a-zA-Z0-9_-]\+\.\(doc\|dvi\|ps\|pdf\|qxp\|docx\|ppt\|pptx\|eps\|tif\).*##g"
 }
 
+trim() {
+	sed 's#[ \t]*##g'
+}
+
 isEmpty() {
-	trimmed="$(echo "$*" | sed 's#[ \t]*##g')"
+	trimmed=$( echo "*" | trim )
 	[ -z "$trimmed" ] || [ ${#trimmed} -lt 30 ]
 }
 
