@@ -3,7 +3,7 @@
 google="http://www.google.com/search?hl=en&q="
 
 fail(){
-  echo "$*" > /dev/stderr
+	echo "Error: $*" > /dev/stderr
 	exit 1
 }
 
@@ -56,6 +56,10 @@ isError() {
 	echo "$*" | grep "Error:" 2> /dev/null
 }
 
+isPositive(){
+	[ "$*" -gt "0" ] 2>/dev/null
+}
+
 info() {
 	pdfinfo $* 2> /dev/null
 }
@@ -65,8 +69,9 @@ getTitle() {
 	title=$( info "$1" | grep "Title:" | sed "s/Title:\s*//" | killBadTitles | killBadChars )
 	page=1
 	#warnl "pdfinfo: Title $title"
-	(( maxPages = 1 * $( info "$1" | grep "Pages" | cut -d":" -f2 ) ))
+	maxPages=$( info "$1" | grep "Pages" | cut -d":" -f2 )
 	#warnl "pdfinfo: Pages $maxPages"
+	isPositive $maxPages && (( maxPages = 1 * "$maxPages" )) || maxPages=3
 	[ $maxPages -gt 3 ] && maxPages=3
 	while isEmpty $title && [ $page -lt $maxPages ]; do
 		#[ $page -eq 1 ] && warn "searching $maxPages pages for title:"
@@ -118,11 +123,27 @@ processFile(){
 	fi
 }
 
+usage() {
+	cat <<-EOF
+	Usage:  $0 DIR
+	        DIR - a directory containing some PDF files
+	
+	EOF
+}
+
+if [ $# -eq 0 ]; then
+	usage
+	fail "You must specifiy a DIR with PDF files"
+fi
+
+[ -d "$1" ] || fail "DIR '$1' is not a directory"
+(( count = 1 * `ls "$1"/*.pdf | wc -l` ))
+
+[ $count -gt 0 ] || fail "DIR '$1' has not PDF files inside"
 
 start=`getTime`
-(( count = 1 * `ls papers/*.pdf | wc -l` ))
 current=0
-for f in papers/*.pdf; do
+for f in "$1"/*.pdf; do
 	echo -ne "$current/$count $f \033[0K\r" > /dev/stderr
 	processFile "$f"
 	(( current++ ))
