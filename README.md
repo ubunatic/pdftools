@@ -7,7 +7,7 @@ License: MIT
 
 getbib.sh
 ---------
-**Input:** all PDF files in the "./papers" dir
+**Input:** all PDF files in the `DIR`
 
 **Output:** automatically generated bibtex for yout drafty papers
 
@@ -20,7 +20,7 @@ Here is an example:
 
     $ ls ./papers
     2005-SIGMOD-stonebraker-the-8-stream-system-requirements.pdf
-    $ sh getbib.sh
+    $ sh getbib.sh papers
     
     @article{papers/2005-SIGMOD-stonebraker-the-8-stream-system-requirements.pdf,
       title={{The 8 Requirements of Real-Time Stream Processing Michael Stonebraker Uur etintemel Stan Zdonik Comp}},
@@ -33,7 +33,7 @@ Here is an example:
     
 You can pipe the output into a file and use it in your documents:
 
-    $ sh genbib.sh > autogen.bib
+    $ sh genbib.sh papers > autogen.bib
 
 In your final PDF the reference may then look like this:
 
