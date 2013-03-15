@@ -120,9 +120,9 @@ processFile(){
 
 
 start=`getTime`
-(( count = 1 * `ls papers/2005-SIG*.pdf | wc -l` ))
+(( count = 1 * `ls papers/*.pdf | wc -l` ))
 current=0
-for f in papers/2005-SIG*.pdf; do
+for f in papers/*.pdf; do
 	echo -ne "$current/$count $f \033[0K\r" > /dev/stderr
 	processFile "$f"
 	(( current++ ))
