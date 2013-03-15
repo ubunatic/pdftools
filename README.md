@@ -7,10 +7,14 @@ License: MIT
 
 getbib.sh
 ---------
-* Input: all PDF files in the "./papers" dir
-* Output: automatically generated bibtex for yout drafty papers
-* The script uses `pdfinfo` and `pdftotext` and some GNU utils to extract the title or something similar from the docs
-* It also uses the PDF filename to extract the year and a useful entry for the "Author". If you follow my naming schema the script should work fine
+**Input:** all PDF files in the "./papers" dir
+
+**Output:** automatically generated bibtex for yout drafty papers
+
+The script uses `pdfinfo` and `pdftotext` and some GNU utils to extract the title or something similar from the docs
+It also uses the PDF filename to extract the year and a useful entry for the "Author".
+If you follow my naming schema the script should work fine.
+The script also works for scanned PDFs and will just dissect the filename if it does not find anything useful inside the PDF
 
 Here is an example:
 
