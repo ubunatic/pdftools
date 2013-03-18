@@ -129,31 +129,53 @@ processFile(){
 
 usage() {
 	cat <<-EOF
-	Usage:  $0 DIR
-	        DIR - a directory containing some PDF files
+	Usage:  $0 PATH
+	
+	  PATH - A PDF file or a adirectory containing some PDF files
+	
+	Examples:
+
+	$0 papers/1997-SIGMOD-Some-File-Name.pdf   #output: single BibTeX entry
+	$0 papers                                  #output: BibTeX for all PDF files in 'papers'
+
+	Known Issues:
+	- Curently filenames must NOT have underscores
+	- The files also must follow the YEAR-Conference-Title.pdf
+	- Spaces my not work as expected
 	
 	EOF
 }
 
+noFileErrorMsg="You must specifiy a PDF file or a DIR with PDF files"
+
 if [ $# -eq 0 ]; then
 	usage
-	fail "You must specifiy a DIR with PDF files"
+	fail "$noFileErrorMsg"
 fi
 
-[ -d "$1" ] || fail "DIR '$1' is not a directory"
-(( count = 1 * `ls "$1"/*.pdf | wc -l` ))
-
-[ $count -gt 0 ] || fail "DIR '$1' has not PDF files inside"
-
 start=`getTime`
-current=0
-for f in "$1"/*.pdf; do
-	echo -ne "$current/$count $f \033[0K\r" > /dev/stderr
-	processFile "$f"
-	(( current++ ))
-done
+
+if [ -f "$1" ]; then
+	count=1
+	processFile $1
+elif	[ -d "$1" ]; then
+	(( count = 1 * `ls "$1"/*.pdf | wc -l` ))
+	[ $count -gt 0 ] || fail "DIR '$1' has not PDF files inside"
+	count=1
+
+	current=0
+	for f in "$1"/*.pdf; do
+		echo -ne "$current/$count $f \033[0K\r" > /dev/stderr
+		processFile "$f"
+		(( current++ ))
+	done
+else
+	fail "PATH '$1' must be a directory or file name. $noFileErrorMsg"
+fi
+
 end=`getTime`
-(( time = end - start ))
-warnl "$count files processed"
-warnl "title extraction took $time seconds"
-	
+if [ $count -gt 0 ]; then
+	(( time = end - start ))
+	warnl "$count files processed"
+	warnl "title extraction took $time seconds"
+fi
