@@ -7,12 +7,15 @@ fail(){
 	exit 1
 }
 
-warn() {
-	echo -n "$*" > /dev/stderr
+warn(){
+	echo "$*" > /dev/stderr
 }
 
-warnl(){
-	echo "$*" > /dev/stderr
+checkTools(){
+	which pdfinfo   > /dev/null || warn Warning: pdfinfo binary not found
+	which pdftotext > /dev/null || warn Warning: pdftotext binary not found
+	which pdfinfo    > /dev/null &&
+	which pdftotext  > /dev/null
 }
 
 getTime(){
@@ -72,9 +75,9 @@ getTitle() {
 	file=$1
 	title=$( info "$1" | grep "Title:" | sed "s/Title:\s*//" | killBadTitles | killBadChars )
 	page=1
-	#warnl "pdfinfo: Title $title"
+	#warn "pdfinfo: Title $title"
 	maxPages=$( info "$1" | grep "Pages" | cut -d":" -f2 )
-	#warnl "pdfinfo: Pages $maxPages"
+	#warn "pdfinfo: Pages $maxPages"
 	isPositive $maxPages && (( maxPages = 1 * "$maxPages" )) || maxPages=3
 	[ $maxPages -gt 3 ] && maxPages=3
 	while isEmpty $title && [ $page -lt $maxPages ]; do
@@ -84,14 +87,14 @@ getTitle() {
 		((page++))
 		#if isEmpty $title
 		#then warn    " $page"
-		#else warnl " $page (found title)"
+		#else warn " $page (found title)"
 		#fi
 	done
-	#[ $page -eq $maxPages ] && warnl " (not found, using filename)"
-	#warnl "Finale Title: $title"
+	#[ $page -eq $maxPages ] && warn " (not found, using filename)"
+	#warn "Finale Title: $title"
 	isEmpty $title && title="$file"
 	#echo  "Title:       ${title:0:10}"
-	#warnl "Fixed Title: ${title:0:10}"
+	#warn "Fixed Title: ${title:0:10}"
 	echo "$title"
 }
 
@@ -107,13 +110,13 @@ processFile(){
 	then echo "dir $file skipped"
 	else
 		[ -f "$file" ] || fail "$file is not a file"
-		#warnl "grepping $file"
+		#warn "grepping $file"
 		title=`getTitle "$file"`
 		year=` getYear  "$file"`
 		base=$( basename "$file" )
 		conf=$( echo "$base" | cut -d"-" -f2  )
 		rest=$( echo "$base" | cut -d"-" -f3- )
-		#warnl "$year ${file:12:10}:  ${title:0:100}"
+		#warn "$year ${file:12:10}:  ${title:0:100}"
 		cat <<-EOF
 			@article{$file,
 				title={{${title:0:100}}},
@@ -144,14 +147,17 @@ usage() {
 	- Spaces my not work as expected
 	
 	EOF
+	checkTools
 }
 
 noFileErrorMsg="You must specifiy a PDF file or a DIR with PDF files"
 
-if [ $# -eq 0 ]; then
-	usage
-	fail "$noFileErrorMsg"
-fi
+
+if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then usage; fi
+
+checkTools || fail Please install the missing tools!
+
+if [ $# -eq 0 ]; then usage; fail "$noFileErrorMsg"; fi
 
 start=`getTime`
 
@@ -176,6 +182,7 @@ fi
 end=`getTime`
 if [ $count -gt 0 ]; then
 	(( time = end - start ))
-	warnl "$count files processed"
-	warnl "title extraction took $time seconds"
+	warn "$count files processed"
+	warn "title extraction took $time seconds"
 fi
+

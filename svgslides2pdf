@@ -1,0 +1,57 @@
+#!/bin/bash
+usage(){
+	cat 1>&2 <<-EOF
+
+	Usage: $0 SVGFILE [options]
+
+	Options:
+		All options are passed to svgslides2pdf.coffee
+
+	Converts an SVG slide set to pdfs via svgslides2pdf.coffee
+	and merges the pdfs as SVGFILE.pdf. Will also work with
+	normal html files or anything else that loads in phantomjs.
+
+	EOF
+	warn $*
+	exit 1
+}
+warn(){
+	echo $* > /dev/stderr
+}
+getSortedFileString(){
+	#sort files by modification time and echo as reversed space separated list
+	FILES=""
+	for f in `ls -c $1`; do FILES="$1/$f $FILES"; done
+	echo $FILES
+}
+joinPages(){
+	FILES=`getSortedFileString $DIR`
+	if [ -z "$FILES" ]; then
+		warn "No pdf files found in $DIR"; return 1
+	elif which pdftk 2> /dev/null; then
+		pdftk $FILES cat output $BASENAME.pdf
+	elif which pdfunite 2> /dev/null; then
+		pdfunite $FILES $BASENAME.pdf
+	elif which pdfjoin 2> /dev/null; then
+		pdfjoin $FILES --outfile $BASENAME.pdf
+	else
+		warn "Warning: No pdf tool found to merge pages. Please install one of the following: pdftk, pdfunite (poppler), pdfjoin (pdfjam)"
+		return 1
+	fi
+}
+
+SVG=$1
+[ -z "$SVG" ] && usage "No SVGFILE specified"
+[ -f "$SVG" ] || usage "SVGFILE $SVG not found"
+CWD=`dirname $SVG`
+BASENAME=`basename $SVG`
+DIR=$CWD/.svg2pdf
+mkdir $DIR 2> /dev/null
+[ -d "$DIR" ] || usage "Could not create tmp dir: $DIR"
+rm $DIR/*.pdf 2> /dev/null
+
+warn "converting $SVG to $DIR/*.pdf"
+svgslides2pdf.coffee $SVG $DIR ${@:2:$#}
+joinPages && [ -f "$BASENAME.pdf" ] &&
+	warn "pdf output merged as $BASENAME.pdf" ||
+	warn "merge failed"
