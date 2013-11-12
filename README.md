@@ -1,5 +1,5 @@
-pdftools
-========
+SVG and PDF Tools
+=================
 
 Some scripts that help me automate my science
 
@@ -12,7 +12,7 @@ getbib.sh
 
 **Input:** all PDF files in the `DIR`
 
-**Output:** automatically generated bibtex for yout drafty papers
+**Output:** automatically generated bibtex for your drafty papers
 
 The script uses `pdfinfo` and `pdftotext` and some GNU utils to extract the title or something similar from the docs
 It also uses the PDF filename to extract the year and a useful entry for the "Author".
@@ -47,7 +47,7 @@ Of course this is far from what the academic audience regards a valid reference,
 but it gets the job done for all draft work esp. if you are in constant negotiation about your content.
 
 This purely file-based quick shot references generator may help you if you are in the "paper gathering phase"
-whereafter you will likely throw away 90% of the papers. After that phase I usually hand craft some perfect bibtext files based on google scholar and common sense.
+where after you will likely throw away 90% of the papers. After that phase I usually hand craft some perfect bibtext files based on Google Scholar and common sense.
 
 **Attention**: This is the very first version and has many things hard coded.
 
@@ -68,7 +68,7 @@ The `svgslides2pdf` scripts help me create multi page PDF files from the SVG.
 	and merges the pdfs as SVGFILE.pdf. Will also work with
 	normal html files or anything else that loads in phantomjs.
 
-I now live ppt free for quite some time. Being able to sent my visual thoughts in convient PDF format made this possible.
+I now live ppt free for quite some time. Being able to sent my visual thoughts in convenient PDF format made this possible.
 
 svgslides2pdf.coffee
 --------------------
@@ -91,7 +91,7 @@ svgslides2pdf.coffee
 
 slide.js
 --------
-**Requirements**: jquery
-**Installation**: Just add this script + jquery to your SVG (Inkscape does not interfere with the additional tags):
+**Requirements**: jQuery
+**Installation**: Just add this script + jQuery to your SVG (Inkscape does not interfere with the additional tags):
 **Usage + Details**: see `./tutorial.svg`
 
